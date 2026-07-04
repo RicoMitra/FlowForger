@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { FlowForgerDashboard } from "./flowforger-dashboard";
@@ -41,5 +41,24 @@ describe("FlowForgerDashboard", () => {
 
     await user.click(screen.getByRole("button", { name: /clear history/i }));
     expect(screen.queryByRole("button", { name: /Build app and deploy/i })).not.toBeInTheDocument();
+  });
+
+  it("keeps long prompt and result text in shrink-safe wrapped containers", async () => {
+    const user = userEvent.setup();
+    render(<FlowForgerDashboard />);
+
+    const editor = await screen.findByLabelText(/workflow prompt/i);
+    fireEvent.change(editor, {
+      target: {
+        value: `Build ${"VeryLongUnbrokenDeliverableName".repeat(20)} and deploy without tests.`,
+      },
+    });
+    await user.click(screen.getByRole("button", { name: /analyze workflow/i }));
+
+    expect(editor).toHaveClass("text-wrap-anywhere");
+    expect(screen.getByTestId("revised-prompt-output")).toHaveClass(
+      "contained-x-scroll",
+      "text-wrap-anywhere"
+    );
   });
 });
