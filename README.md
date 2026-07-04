@@ -51,4 +51,4 @@ pnpm build
 FlowForger is intended to deploy as a separate Vercel project connected to its own public GitHub repository:
 
 - GitHub: https://github.com/RicoMitra/FlowForger
-- Vercel: pending deployment
+- Vercel: https://flowforger.vercel.app
